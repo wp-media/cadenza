@@ -11,7 +11,7 @@
 
 **Standalone solos. No orchestra required.**
 
-*Four utility agents that each have one job — and do it well, with no pipeline, no orchestration, and no ceremony.*
+*Utility agents that each have one job — and do it well, with no pipeline, no orchestration, and no ceremony.*
 
 ---
 
@@ -27,7 +27,7 @@
 
 In a concerto, the **cadenza** is the moment the orchestra pauses and a single instrument plays alone — free, expressive, complete on its own terms.
 
-Cadenza is a **Claude Code plugin** built on that same idea. It contains four specialist agents that each handle one task: generating changelogs, writing PR descriptions, authoring PHPUnit tests, and producing retrospective reports. No pipeline. No spec. No twelve-agent handoff chain. Just ask, and it's done.
+Cadenza is a **Claude Code plugin** built on that same idea. It contains specialist agents, each handling one task: generating changelogs, writing PR descriptions, authoring PHPUnit tests, and producing retrospective reports. No pipeline. No spec. No twelve-agent handoff chain. Just ask, and it's done.
 
 Use Cadenza on its own for projects that don't need a full delivery pipeline. Or pair it with [Maestro](https://github.com/wp-media/maestro) — both plugins share the same config schema and coexist without conflict.
 
@@ -53,13 +53,13 @@ Then add a config file to your project:
 }
 ```
 
-That's it. All four agents are ready.
+That's it. All agents are ready.
 
 ---
 
 ## The Soloists
 
-Four agents. Each one performs alone.
+Each one performs alone.
 
 | Agent | Command | What it does |
 |---|---|---|

@@ -28,7 +28,7 @@ These five rules apply to every agent, in every phase, before any skill-specific
 
 # 1. Project Overview
 
-Cadenza is a **Claude Code plugin** containing four standalone utility agents:
+Cadenza is a **Claude Code plugin** containing standalone utility agents:
 
 | Agent | Purpose |
 |---|---|
@@ -108,7 +108,7 @@ The canonical config file is `.claude/cadenza.json`, committed in each project r
 ### Notes
 
 - The filename is `.claude/cadenza.json`, not `maestro.json`. This allows both Cadenza and Maestro to be installed in the same project simultaneously without conflict.
-- All four agents read the same file. There is no per-agent config — the schema is intentionally minimal.
+- All agents read the same file. There is no per-agent config — the schema is intentionally minimal.
 - If `.claude/cadenza.json` is absent, agents must stop immediately and instruct the user to create it. Never proceed with hardcoded fallbacks.
 
 ---
