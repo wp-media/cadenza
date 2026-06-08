@@ -73,12 +73,18 @@ Try templates in priority order:
 if [ -f .github/refs/pr-template.md ]; then
   cat .github/refs/pr-template.md
 else
-  # 2. Maestro plugin cache (if Maestro is installed alongside Cadenza)
-  TMPL=$(find ~/.claude/plugins -name "pr-template.md" -path "*issue-workflow*" 2>/dev/null | sort -V | tail -1)
-  if [ -n "$TMPL" ]; then
-    cat "$TMPL"
+  # 2. Cadenza bundled template
+  CADENZA_TMPL=$(find ~/.claude/plugins -name "pr-template.md" -path "*cadenza*" 2>/dev/null | sort -V | tail -1)
+  if [ -n "$CADENZA_TMPL" ]; then
+    cat "$CADENZA_TMPL"
   else
-    echo "NO_TEMPLATE_FOUND"
+    # 3. Maestro plugin cache (if Maestro is installed alongside Cadenza)
+    MAESTRO_TMPL=$(find ~/.claude/plugins -name "pr-template.md" -path "*issue-workflow*" 2>/dev/null | sort -V | tail -1)
+    if [ -n "$MAESTRO_TMPL" ]; then
+      cat "$MAESTRO_TMPL"
+    else
+      echo "NO_TEMPLATE_FOUND"
+    fi
   fi
 fi
 ```

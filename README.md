@@ -144,12 +144,15 @@ cadenza/
 │   ├── retrospective-agent.md
 │   └── test-writer.md
 │
-└── commands/                        ← Skills (slash commands)
-    ├── cadenza.md
-    ├── changelog.md
-    ├── pr.md
-    ├── retrospective.md
-    └── test.md
+├── commands/                        ← Skills (slash commands)
+│   ├── cadenza.md
+│   ├── changelog.md
+│   ├── pr.md
+│   ├── retrospective.md
+│   └── test.md
+│
+└── refs/                            ← Bundled reference files
+    └── pr-template.md               ← Default PR description template
 ```
 
 ---
