@@ -11,7 +11,7 @@
 
 **Standalone solos. No orchestra required.**
 
-*A Claude Code plugin containing four standalone utility agents — each one useful on its own, without the full Maestro delivery pipeline.*
+*Four utility agents that each have one job — and do it well, with no pipeline, no orchestration, and no ceremony.*
 
 ---
 
@@ -25,81 +25,24 @@
 
 ## What Is Cadenza?
 
-Cadenza is a **Claude Code plugin** containing four standalone utility agents — changelog generation, PR description writing, PHPUnit test authoring, and pipeline retrospectives.
+In a concerto, the **cadenza** is the moment the orchestra pauses and a single instrument plays alone — free, expressive, complete on its own terms.
 
-Like the cadenza passage in a concerto, these agents perform solo: they require no orchestration layer, no delivery pipeline, and no other agents to be useful. Install Cadenza by itself, or pair it with Maestro — they share the same config schema and coexist without conflict.
+Cadenza is a **Claude Code plugin** built on that same idea. It contains four specialist agents that each handle one task: generating changelogs, writing PR descriptions, authoring PHPUnit tests, and producing retrospective reports. No pipeline. No spec. No twelve-agent handoff chain. Just ask, and it's done.
+
+Use Cadenza on its own for projects that don't need a full delivery pipeline. Or pair it with [Maestro](https://github.com/wp-media/maestro) — both plugins share the same config schema and coexist without conflict.
 
 ---
 
 ## Install
 
 ```
-/plugin marketplace add wp-media/claude-marketplace
 /plugin install cadenza@wp-media
 ```
 
 Then add a config file to your project:
 
-```
-/cadenza:onboard
-```
-
-Or create `.claude/cadenza.json` manually — see [Configuration](#configuration) below.
-
----
-
-## Agents
-
-Four specialists. Each one has a single job.
-
-| Agent | Command | Role |
-|---|---|---|
-| `changelog-agent` | `/cadenza:changelog` | Generates a PO-ready grouped changelog from merged PRs since the last release |
-| `pr-agent` | `/cadenza:pr` | Writes a structured PR description for the current branch |
-| `test-writer` | `/cadenza:test` | Authors PHPUnit tests for PHP source files |
-| `retrospective-agent` | `/cadenza:retrospective` | Analyses a completed pipeline run and surfaces learnings |
-
----
-
-## Commands
-
-| Command | What it does |
-|---|---|
-| `/cadenza` | Show the full command map — quick reference for all agents |
-| `/cadenza:changelog` | Generate a PO-ready grouped changelog from merged PRs |
-| `/cadenza:pr` | Generate a PR description for the current branch |
-| `/cadenza:test` | Write PHPUnit tests for PHP source files |
-| `/cadenza:retrospective` | Analyse a completed pipeline run |
-
----
-
-## One Config, Any Project
-
-Every agent reads a single config file — `.claude/cadenza.json` — committed in your repo. The same agents work across all your projects; only the config changes.
-
-```
-Without Cadenza                    With Cadenza
-─────────────────────              ──────────────────────────────
-project-a/                         Cadenza plugin (installed once)
-  .claude/agents/ ──┐                agents/        ← one score, always current
-  .claude/skills/ ──┤                commands/      ← one score, always current
-     (drifting)    │
-                   │              project-a/
-project-b/         │                .claude/cadenza.json   ← project identity
-  .claude/agents/ ──┤
-  .claude/skills/ ──┤              project-b/
-   (older, drifted) │                .claude/cadenza.json   ← project identity
-```
-
-**Updates are automatic.** When Cadenza ships a new version, every project picks it up on the next Claude session — no action needed.
-
----
-
-## Configuration
-
-Create `.claude/cadenza.json` in your project root. This is a **different file from `maestro.json`** — both plugins can be installed at the same time without conflict.
-
 ```jsonc
+// .claude/cadenza.json
 {
   "ai": {
     "repo":               "my-org/my-plugin",
@@ -110,20 +53,81 @@ Create `.claude/cadenza.json` in your project root. This is a **different file f
 }
 ```
 
+That's it. All four agents are ready.
+
+---
+
+## The Soloists
+
+Four agents. Each one performs alone.
+
+| Agent | Command | What it does |
+|---|---|---|
+| `changelog-agent` | `/cadenza:changelog` | Collects merged PRs since the last release, groups them by user impact, and writes a PO-ready changelog draft |
+| `pr-agent` | `/cadenza:pr` | Reads your branch commits and diffs, then writes a structured PR description — without pushing anything |
+| `test-writer` | `/cadenza:test` | Discovers your project's test conventions, then authors PHPUnit unit and integration tests for PHP source files |
+| `retrospective-agent` | `/cadenza:retrospective` | Scans completed pipeline runs, surfaces DOD pass rates and loop-back patterns, and suggests concrete `AGENTS.md` learnings |
+
+---
+
+## Commands
+
+| Command | What it does |
+|---|---|
+| `/cadenza` | Show the full command map |
+| `/cadenza:changelog [v1.2.3]` | Generate a PO-ready changelog from merged PRs |
+| `/cadenza:pr` | Write a PR description for the current branch |
+| `/cadenza:test [path/to/File.php]` | Author PHPUnit tests for a source file (or auto-detect from branch diff) |
+| `/cadenza:retrospective [date-from date-to]` | Analyse completed pipeline runs and surface learnings |
+
+---
+
+## One Config, Any Project
+
+Every agent reads `.claude/cadenza.json` — a single file committed in your repo. The agents live in the plugin. The identity lives in the config.
+
+```
+Cadenza plugin (installed once)        Your projects
+──────────────────────────────         ────────────────────────────────────
+agents/                                project-a/
+  changelog-agent.md  ──────────────►    .claude/cadenza.json   ← identity
+  pr-agent.md         ──────────────►
+  test-writer.md      ──────────────►  project-b/
+  retrospective-agent.md ───────────►    .claude/cadenza.json   ← identity
+commands/
+  changelog.md                         project-c/
+  pr.md                                  .claude/cadenza.json   ← identity
+  test.md
+  retrospective.md
+```
+
+When Cadenza ships a new version, every project picks it up on the next Claude session — no action needed.
+
+---
+
+## Configuration
+
 | Key | Required | Description |
 |---|---|---|
-| `ai.repo` | Yes | GitHub repository in `owner/repo` format. Used for PR and issue links. |
-| `ai.temp_root` | Yes | Directory where agents write output files (e.g. changelogs, test stubs). |
-| `ai.display_name` | Yes | Human-readable project name used in generated output. |
-| `ai.architecture_skill` | No | Name of the project-specific architecture skill. Loaded by agents that need structural context. |
+| `ai.repo` | Yes | GitHub repository in `owner/repo` format — used for PR and issue links |
+| `ai.temp_root` | Yes | Directory where agents write output files (changelogs, PR drafts, reports) |
+| `ai.display_name` | Yes | Human-readable project name used in generated output |
+| `ai.architecture_skill` | No | Name of the project-specific architecture skill — loaded by `test-writer` to discover test conventions |
 
 ---
 
 ## Using Cadenza Alongside Maestro
 
-Cadenza and Maestro share the same config schema but use different filenames (`.claude/cadenza.json` vs `.claude/maestro.json`). You can install both plugins in the same project — they operate independently and do not conflict.
+Cadenza and [Maestro](https://github.com/wp-media/maestro) share the same config schema but use **different filenames** — `.claude/cadenza.json` vs. `.claude/maestro.json`. Both plugins can be installed in the same project and operate without conflict.
 
-When Maestro is installed, its built-in `changelog-agent`, `pr-agent`, `test-writer`, and `retrospective-agent` take precedence within the Maestro pipeline. Cadenza's versions are available as standalone commands via the `/cadenza:*` prefix.
+When Maestro is installed, its pipeline invokes the same agents internally. Cadenza exposes them as standalone `/cadenza:*` commands — available anytime, outside any pipeline run.
+
+Want to watch every agent event live? Add [Podium](https://github.com/wp-media/podium).
+
+```
+/plugin install podium@wp-media
+/podium start   →   http://localhost:4820
+```
 
 ---
 
@@ -133,27 +137,31 @@ When Maestro is installed, its built-in `changelog-agent`, `pr-agent`, `test-wri
 cadenza/
 │
 ├── AGENTS.md                        ← Base guardrails every project extends
-├── .claude-plugin/
-│   └── plugin.json                  ← Claude Code plugin manifest
 │
 ├── agents/                          ← 4 standalone agents
 │   ├── changelog-agent.md
 │   ├── pr-agent.md
-│   ├── test-writer.md
-│   └── retrospective-agent.md
+│   ├── retrospective-agent.md
+│   └── test-writer.md
 │
 └── commands/                        ← Skills (slash commands)
     ├── cadenza.md
     ├── changelog.md
     ├── pr.md
-    ├── test.md
-    └── retrospective.md
+    ├── retrospective.md
+    └── test.md
 ```
 
 ---
 
 <div align="center">
 
-*Play the solo.*
+*The orchestra pauses. You play.*
+
+---
+
+*Part of the Orchestra suite — [Maestro](https://github.com/wp-media/maestro) · [Podium](https://github.com/wp-media/podium) · Cadenza*
+
+*Built at [WP-Media](https://wp-media.me)*
 
 </div>
