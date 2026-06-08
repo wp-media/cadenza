@@ -9,14 +9,14 @@ Generates a complete PR description for the current branch by analyzing commits,
 
 ## When to use this vs. release-agent
 
-| | `cadenza:pr` | `release-agent` |
+| | `cadenza:pr` | `release-agent` (Maestro only) |
 |---|---|---|
 | **Triggered by** | Developer (standalone) | Orchestrator (pipeline) |
 | **Source of truth** | Git commits + diffs | Implementation spec |
 | **Output** | Description file in `{TEMP_ROOT}/issues/<N>/` | Draft PR created in GitHub |
 | **Pushes branch?** | No | Yes |
 
-Use this skill when you coded manually outside the issue workflow and want help writing the PR description.
+Use this skill when you coded manually outside the issue workflow and want help writing the PR description. `release-agent` is part of [Maestro](https://github.com/wp-media/maestro) — not included in Cadenza.
 
 ## Config loading
 

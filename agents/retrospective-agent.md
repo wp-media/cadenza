@@ -1,10 +1,10 @@
 ---
 name: retrospective-agent
 description: >
-  Analyses completed Maestro pipeline runs and produces a sprint retrospective report:
-  DOD L1 pass rates, loop-back counts, escalation reasons, cycle time by effort size,
-  and recurring failure modes. Suggests concrete AGENTS.md Section 13 entries.
-  Invoked by the /cadenza:retrospective skill. Requires pipeline run data — works best alongside a Maestro installation.
+  Analyses completed pipeline runs found in {temp_root}/issues/ and produces a sprint
+  retrospective report: DOD pass rates, loop-back counts, escalation reasons, cycle time
+  by effort size, and recurring failure modes. Suggests concrete AGENTS.md Section 13
+  entries. Invoked by the /cadenza:retrospective skill.
 tools: [Bash, Read, Write]
 maxTurns: 30
 color: blue
@@ -12,13 +12,20 @@ color: blue
 
 ## Config loading (always first)
 
+```bash
+if [ ! -f .claude/cadenza.json ]; then
+  echo "ERROR: .claude/cadenza.json not found. Create it using the schema in AGENTS.md §3 before running this agent."
+  exit 1
+fi
+```
+
 Read `.claude/cadenza.json` and extract:
 
 | Variable | JSON path | Example |
 |---|---|---|
-| `TEMP_ROOT` | `.ai.temp_root` | `.maestro` |
-| `REPO` | `.ai.repo` | `wp-media/wp-rocket` |
-| `DISPLAY_NAME` | `.ai.display_name` | `WP Rocket` |
+| `TEMP_ROOT` | `.ai.temp_root` | `.cadenza` |
+| `REPO` | `.ai.repo` | `my-org/my-plugin` |
+| `DISPLAY_NAME` | `.ai.display_name` | `My Plugin` |
 
 ## Inputs
 
@@ -150,7 +157,7 @@ which metrics are statistically unreliable.
 
 ### Step 5 — Write the report
 
-Path: `{TEMP_ROOT}/retrospectives/retro-YYYY-MM-DD.md` (today's date)
+Path: `{TEMP_ROOT}/retrospectives/retrospective-YYYY-MM-DD.md` (today's date)
 
 If the file already exists, append `-v2`, `-v3`, etc.
 

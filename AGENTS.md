@@ -103,7 +103,7 @@ The canonical config file is `.claude/cadenza.json`, committed in each project r
 | `ai.repo` | string | Yes | GitHub repository in `owner/repo` format. Used for PR and issue links in all generated output. |
 | `ai.temp_root` | string | Yes | Root directory where agents write output files (changelogs, test stubs, retrospective reports, etc.). Committed or gitignored — your choice. |
 | `ai.display_name` | string | Yes | Human-readable project name used in generated output headers and PR descriptions. |
-| `ai.architecture_skill` | string | No | Name of the project-specific architecture skill (matches a `.claude/commands/<name>.md` file). Loaded by agents that need structural context before writing tests or PR descriptions. |
+| `ai.architecture_skill` | string | No | Name of the project-specific architecture skill (matches a `.claude/commands/<name>.md` file). Loaded by `test-writer` to discover test paths, naming conventions, and `@group` annotations. |
 
 ### Notes
 
@@ -130,9 +130,17 @@ Agents write output files under `{temp_root}/`:
 | `changelog-agent` | `{temp_root}/changelog/changelog-next-version-po-YYYY-MM-DD.md` |
 | `retrospective-agent` | `{temp_root}/retrospectives/retrospective-YYYY-MM-DD.md` |
 | `test-writer` | Mirrors source path under `tests/` — does not use `temp_root` |
-| `pr-agent` | Console output only — no file written |
+| `pr-agent` | `{temp_root}/issues/<N>/pull.md` (or `issues/<branch-slug>/pull.md` if no issue number) |
 
 If an output file already exists, append `-v2`, `-v3`, etc. Never overwrite silently.
+
+---
+
+# 6–12. Reserved for Project Extensions
+
+Sections 6 through 12 are intentionally absent from this base file. Projects that
+copy-extend this AGENTS.md should add their own domain-specific sections here
+(e.g. coding standards, deployment rules, test policy, security guardrails).
 
 ---
 

@@ -8,12 +8,19 @@ color: yellow
 
 ## Config loading (always first)
 
+```bash
+if [ ! -f .claude/cadenza.json ]; then
+  echo "ERROR: .claude/cadenza.json not found. Create it using the schema in AGENTS.md §3 before running this agent."
+  exit 1
+fi
+```
+
 Read `.claude/cadenza.json` and extract:
 
 | Variable | JSON path | Example |
 |---|---|---|
-| `ARCH_SKILL` | `.ai.architecture_skill` | `backwpup-architecture` |
-| `DISPLAY_NAME` | `.ai.display_name` | `BackWPUp Pro` |
+| `ARCH_SKILL` | `.ai.architecture_skill` | `my-plugin-architecture` |
+| `DISPLAY_NAME` | `.ai.display_name` | `My Plugin` |
 
 ---
 
@@ -29,12 +36,7 @@ Before writing a single line, discover the project's patterns:
 
 1. **Read the architecture skill** at `.claude/commands/{ARCH_SKILL}.md`. Extract any testing conventions, namespace rules, or group annotations documented there.
 
-2. **Discover source and test paths** from `cadenza.json` `areas`:
-   ```bash
-   cat .claude/cadenza.json | jq '.areas[] | select(.role | test("php|tests"))'
-   ```
-
-3. **Find test commands** from `composer.json`:
+2. **Find test commands** from `composer.json`:
    ```bash
    cat composer.json | jq '.scripts | to_entries[] | select(.key | startswith("test")) | {key, value}'
    ```

@@ -8,13 +8,20 @@ color: green
 
 ## Config loading (always first)
 
+```bash
+if [ ! -f .claude/cadenza.json ]; then
+  echo "ERROR: .claude/cadenza.json not found. Create it using the schema in AGENTS.md §3 before running this agent."
+  exit 1
+fi
+```
+
 Read `.claude/cadenza.json` and extract:
 
 | Variable | JSON path | Example |
 |---|---|---|
-| `REPO` | `.ai.repo` | `wp-media/backwpup-pro` |
-| `TEMP_ROOT` | `.ai.temp_root` | `.maestro` |
-| `DISPLAY_NAME` | `.ai.display_name` | `BackWPUp Pro` |
+| `REPO` | `.ai.repo` | `my-org/my-plugin` |
+| `TEMP_ROOT` | `.ai.temp_root` | `.cadenza` |
+| `DISPLAY_NAME` | `.ai.display_name` | `My Plugin` |
 
 Every `{REPO}`, `{TEMP_ROOT}` below refers to these runtime values.
 
@@ -28,7 +35,8 @@ Every `{REPO}`, `{TEMP_ROOT}` below refers to these runtime values.
 
 ## Optional style references
 
-Check whether these files exist and read them if present — they inform tone and format:
+Check whether these files exist and read them if present — they inform tone and format.
+Adjust these paths to match your project's changelog conventions.
 
 ```bash
 test -f changelog.txt && head -40 changelog.txt

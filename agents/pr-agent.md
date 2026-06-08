@@ -8,13 +8,20 @@ color: orange
 
 ## Config loading (always first)
 
+```bash
+if [ ! -f .claude/cadenza.json ]; then
+  echo "ERROR: .claude/cadenza.json not found. Create it using the schema in AGENTS.md §3 before running this agent."
+  exit 1
+fi
+```
+
 Read `.claude/cadenza.json` and extract:
 
 | Variable | JSON path | Example |
 |---|---|---|
-| `REPO` | `.ai.repo` | `wp-media/backwpup-pro` |
-| `TEMP_ROOT` | `.ai.temp_root` | `.maestro` |
-| `DISPLAY_NAME` | `.ai.display_name` | `BackWPUp Pro` |
+| `REPO` | `.ai.repo` | `my-org/my-plugin` |
+| `TEMP_ROOT` | `.ai.temp_root` | `.cadenza` |
+| `DISPLAY_NAME` | `.ai.display_name` | `My Plugin` |
 
 Detect the base branch:
 
@@ -59,20 +66,40 @@ Focus on `src/`, `inc/`, `tests/`. Understand:
 
 ### Step 4 — Load the PR template
 
-Try the project-specific template first, then fall back to the Maestro-bundled one:
+Try templates in priority order:
 
 ```bash
-# Project-specific override
+# 1. Project-specific override
 if [ -f .github/refs/pr-template.md ]; then
   cat .github/refs/pr-template.md
 else
-  # Maestro plugin cache (Maestro is a Claude Code plugin, not copied into the project)
-  find ~/.claude/plugins -name "pr-template.md" \( -path "*issue-workflow*" -o -path "*cadenza*" \) 2>/dev/null \
-    | sort -V | tail -1 | xargs cat 2>/dev/null
+  # 2. Maestro plugin cache (if Maestro is installed alongside Cadenza)
+  TMPL=$(find ~/.claude/plugins -name "pr-template.md" -path "*issue-workflow*" 2>/dev/null | sort -V | tail -1)
+  if [ -n "$TMPL" ]; then
+    cat "$TMPL"
+  else
+    echo "NO_TEMPLATE_FOUND"
+  fi
 fi
 ```
 
-Follow the loaded template's structure exactly.
+If `NO_TEMPLATE_FOUND`, use this default structure:
+
+```markdown
+## Summary
+<!-- What does this PR do and why? -->
+
+## Changes
+<!-- Bullet list of what was added, changed, or removed -->
+
+## Testing
+<!-- How was this tested? What scenarios were covered? -->
+
+## Notes
+<!-- Anything the reviewer should know: edge cases, follow-ups, out-of-scope items -->
+```
+
+Follow the loaded (or default) template's structure exactly.
 
 ### Step 5 — Generate the PR description
 

@@ -1,0 +1,13 @@
+# Cadenza temp output
+.cadenza/
+
+# Podium session data
+.podium/
+
+# macOS
+.DS_Store
+
+# Editor
+.idea/
+.vscode/
+*.swp
