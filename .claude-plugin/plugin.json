@@ -1,0 +1,19 @@
+{
+  "name": "cadenza",
+  "version": "0.2.1",
+  "description": "Standalone utility agents for Claude Code — changelog, PR description, PHPUnit tests, retrospective, and atomic commits.",
+  "author": {
+    "name": "wp-media"
+  },
+  "homepage": "https://github.com/wp-media/cadenza",
+  "repository": "https://github.com/wp-media/cadenza",
+  "license": "MIT",
+  "keywords": [
+    "wordpress",
+    "agents",
+    "utilities",
+    "changelog",
+    "commits",
+    "wp-media"
+  ]
+}
