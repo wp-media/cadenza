@@ -22,6 +22,11 @@ Print the following organised command reference to the user. Do not run anything
 | `/cadenza:pr` | Generate a PR description for the current branch |
 | `/cadenza:test [path/to/File.php]` | Write PHPUnit tests for PHP source files |
 
+## Commit
+| Command | What it does |
+|---|---|
+| `/cadenza:commit [without <file>]` | Atomic commits with generated messages, then offer to push |
+
 ## Reflect
 | Command | What it does |
 |---|---|

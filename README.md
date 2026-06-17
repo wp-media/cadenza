@@ -17,7 +17,7 @@
 
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-plugin-blueviolet?style=flat-square)](https://claude.ai/code)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green?style=flat-square)](LICENSE)
-[![Version](https://img.shields.io/badge/version-0.1.0-orange?style=flat-square)](https://github.com/wp-media/cadenza/releases)
+[![Version](https://img.shields.io/badge/version-0.2.0-orange?style=flat-square)](https://github.com/wp-media/cadenza/releases)
 
 </div>
 
@@ -67,6 +67,7 @@ Each one performs alone.
 | `pr-agent` | `/cadenza:pr` | Reads your branch commits and diffs, then writes a structured PR description — without pushing anything |
 | `test-writer` | `/cadenza:test` | Discovers your project's test conventions, then authors PHPUnit unit and integration tests for PHP source files |
 | `retrospective-agent` | `/cadenza:retrospective` | Scans completed pipeline runs, surfaces DOD pass rates and loop-back patterns, and suggests concrete `AGENTS.md` learnings |
+| *(built-in)* | `/cadenza:commit` | Analyses changed files, groups them into atomic commits with generated messages, then offers to push |
 
 ---
 
@@ -79,6 +80,7 @@ Each one performs alone.
 | `/cadenza:pr` | Write a PR description for the current branch |
 | `/cadenza:test [path/to/File.php]` | Author PHPUnit tests for a source file (or auto-detect from branch diff) |
 | `/cadenza:retrospective [date-from date-to]` | Analyse completed pipeline runs and surface learnings |
+| `/cadenza:commit [without <file>]` | Atomic commits with generated messages, then offer to push |
 
 ---
 
@@ -94,11 +96,12 @@ agents/                                project-a/
   pr-agent.md         ──────────────►
   test-writer.md      ──────────────►  project-b/
   retrospective-agent.md ───────────►    .claude/cadenza.json   ← identity
-commands/
-  changelog.md                         project-c/
-  pr.md                                  .claude/cadenza.json   ← identity
-  test.md
-  retrospective.md
+skills/
+  changelog/                           project-c/
+  pr/                                    .claude/cadenza.json   ← identity
+  test/
+  retrospective/
+  commit/
 ```
 
 When Cadenza ships a new version, every project picks it up on the next Claude session — no action needed.
@@ -144,12 +147,13 @@ cadenza/
 │   ├── retrospective-agent.md
 │   └── test-writer.md
 │
-├── commands/                        ← Skills (slash commands)
-│   ├── cadenza.md
-│   ├── changelog.md
-│   ├── pr.md
-│   ├── retrospective.md
-│   └── test.md
+├── skills/                          ← Skills (slash commands)
+│   ├── cadenza/
+│   ├── changelog/
+│   ├── commit/
+│   ├── pr/
+│   ├── retrospective/
+│   └── test/
 │
 └── refs/                            ← Bundled reference files
     └── pr-template.md               ← Default PR description template
