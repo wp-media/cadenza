@@ -1,27 +1,29 @@
 ---
 name: changelog-agent
-description: Generates a PO-ready grouped changelog from merged PRs since the last release. Reads project config from cadenza.json. Invoked by the /cadenza:changelog skill. Returns the output file path.
+description: Generates a PO-ready grouped changelog from merged PRs since the last release. Auto-detects project identity. Invoked by the /cadenza:changelog skill. Returns the output file path.
 tools: [Bash, Read, Write]
 maxTurns: 20
 color: green
 ---
 
-## Config loading (always first)
+## Project identity (auto-detected)
+
+No config file is read. Identity is auto-detected at startup via the resolver below (AGENTS.md §3):
 
 ```bash
-if [ ! -f .claude/cadenza.json ]; then
-  echo "ERROR: .claude/cadenza.json not found. Create it using the schema in AGENTS.md §3 before running this agent."
-  exit 1
-fi
+# --- Cadenza project identity (no config file — pure auto-detection) ---
+REPO=$(gh repo view --json nameWithOwner -q .nameWithOwner 2>/dev/null)
+[ -z "$REPO" ] && REPO=$(git remote get-url origin 2>/dev/null | sed -E 's#.*[:/]([^/]+/[^/]+?)(\.git)?$#\1#')
+# REPO may be empty for local-only repos — warn, use TODO(repo), do NOT exit.
+
+TEMP_ROOT=".cadenza"
+
+DISPLAY_NAME=$(grep -rhoE '^\s*\*?\s*Plugin Name:\s*.+' . --include=*.php 2>/dev/null | head -1 | sed -E 's/.*Plugin Name:\s*//')
+[ -z "$DISPLAY_NAME" ] && DISPLAY_NAME=$(jq -r '.name // empty' composer.json 2>/dev/null)
+[ -z "$DISPLAY_NAME" ] && DISPLAY_NAME=$(basename "$(git rev-parse --show-toplevel 2>/dev/null)")
 ```
 
-Read `.claude/cadenza.json` and extract:
-
-| Variable | JSON path | Example |
-|---|---|---|
-| `REPO` | `.ai.repo` | `my-org/my-plugin` |
-| `TEMP_ROOT` | `.ai.temp_root` | `.cadenza` |
-| `DISPLAY_NAME` | `.ai.display_name` | `My Plugin` |
+Never abort on partial identity — if `REPO` can't be resolved, use a `TODO(repo)` placeholder plus a one-line warning and keep going.
 
 Every `{REPO}`, `{TEMP_ROOT}` below refers to these runtime values.
 

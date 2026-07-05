@@ -8,12 +8,10 @@ description: Analyse completed pipeline runs and surface DOD pass rates, loop-ba
 Closes the pipeline feedback loop. Scans completed issue runs, surfaces patterns the
 team should act on, and proposes ready-to-paste Section 13 learnings for `AGENTS.md`.
 
-## Config loading
+## Project identity
 
-Read `.claude/cadenza.json`:
-- `{TEMP_ROOT}` = `.ai.temp_root`
-- `{REPO}` = `.ai.repo`
-- `{DISPLAY_NAME}` = `.ai.display_name`
+Project identity is auto-detected (see AGENTS.md §3) — no config file.
+This skill uses: `{TEMP_ROOT}`, `{REPO}`, `{DISPLAY_NAME}`.
 
 ## Steps
 

@@ -18,12 +18,10 @@ Generates a complete PR description for the current branch by analyzing commits,
 
 Use this skill when you coded manually outside the issue workflow and want help writing the PR description. `release-agent` is part of [Maestro](https://github.com/wp-media/maestro) — not included in Cadenza.
 
-## Config loading
+## Project identity
 
-Read `.claude/cadenza.json`:
-- `{REPO}` = `.ai.repo`
-- `{TEMP_ROOT}` = `.ai.temp_root`
-- `{DISPLAY_NAME}` = `.ai.display_name`
+Project identity is auto-detected (see AGENTS.md §3) — no config file.
+This skill uses: `{REPO}`, `{TEMP_ROOT}`, `{DISPLAY_NAME}`.
 
 ## Steps
 

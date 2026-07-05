@@ -29,7 +29,7 @@ In a concerto, the **cadenza** is the moment the orchestra pauses and a single i
 
 Cadenza is a **Claude Code plugin** built on that same idea. It contains specialist agents, each handling one task: generating changelogs, writing PR descriptions, authoring PHPUnit tests, and producing retrospective reports. No pipeline. No spec. No twelve-agent handoff chain. Just ask, and it's done.
 
-Use Cadenza on its own for projects that don't need a full delivery pipeline. Or pair it with [Maestro](https://github.com/wp-media/maestro) — both plugins share the same config schema and coexist without conflict.
+Use Cadenza on its own for projects that don't need a full delivery pipeline. Or pair it with [Maestro](https://github.com/wp-media/maestro) — both plugins can be installed in the same project and coexist without conflict.
 
 ---
 
@@ -39,21 +39,7 @@ Use Cadenza on its own for projects that don't need a full delivery pipeline. Or
 /plugin install cadenza@wp-media
 ```
 
-Then add a config file to your project:
-
-```jsonc
-// .claude/cadenza.json
-{
-  "ai": {
-    "repo":               "my-org/my-plugin",
-    "temp_root":          ".cadenza",
-    "display_name":       "My Plugin",
-    "architecture_skill": "my-plugin-architecture"
-  }
-}
-```
-
-That's it. All agents are ready.
+That's it. Project identity is auto-detected from your repo — no config file to add. All agents are ready.
 
 ---
 
@@ -84,21 +70,21 @@ Each one performs alone.
 
 ---
 
-## One Config, Any Project
+## Zero Config, Any Project
 
-Every agent reads `.claude/cadenza.json` — a single file committed in your repo. The agents live in the plugin. The identity lives in the config.
+Every agent auto-detects project identity at startup — from your git remote, your plugin's `Plugin Name:` header, `composer.json`, or the repo directory name. The agents live in the plugin. Your projects have nothing to commit.
 
 ```
 Cadenza plugin (installed once)        Your projects
 ──────────────────────────────         ────────────────────────────────────
 agents/                                project-a/
-  changelog-agent.md  ──────────────►    .claude/cadenza.json   ← identity
+  changelog-agent.md  ──────────────►    (auto-detected)
   pr-agent.md         ──────────────►
   test-writer.md      ──────────────►  project-b/
-  retrospective-agent.md ───────────►    .claude/cadenza.json   ← identity
+  retrospective-agent.md ───────────►    (auto-detected)
 skills/
   changelog/                           project-c/
-  pr/                                    .claude/cadenza.json   ← identity
+  pr/                                    (auto-detected)
   test/
   retrospective/
   commit/
@@ -110,18 +96,13 @@ When Cadenza ships a new version, every project picks it up on the next Claude s
 
 ## Configuration
 
-| Key | Required | Description |
-|---|---|---|
-| `ai.repo` | Yes | GitHub repository in `owner/repo` format — used for PR and issue links |
-| `ai.temp_root` | Yes | Directory where agents write output files (changelogs, PR drafts, reports) |
-| `ai.display_name` | Yes | Human-readable project name used in generated output |
-| `ai.architecture_skill` | No | Name of the project-specific architecture skill — loaded by `test-writer` to discover test conventions |
+None. Everything is auto-detected from your repo — nothing to commit.
 
 ---
 
 ## Using Cadenza Alongside Maestro
 
-Cadenza and [Maestro](https://github.com/wp-media/maestro) share the same config schema but use **different filenames** — `.claude/cadenza.json` vs. `.claude/maestro.json`. Both plugins can be installed in the same project and operate without conflict.
+Cadenza and [Maestro](https://github.com/wp-media/maestro) can both be installed in the same project and operate without conflict.
 
 When Maestro is installed, its pipeline invokes the same agents internally. Cadenza exposes them as standalone `/cadenza:*` commands — available anytime, outside any pipeline run.
 

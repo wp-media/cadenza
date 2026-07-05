@@ -33,4 +33,4 @@ Print the following organised command reference to the user. Do not run anything
 | `/cadenza:retrospective [date-from date-to]` | Analyse a completed pipeline run |
 
 ---
-*Type any command directly to run it. Each agent reads `.claude/cadenza.json` for project identity.*
+*Type any command directly to run it. Each agent auto-detects project identity — no config file needed.*

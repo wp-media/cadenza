@@ -6,21 +6,24 @@ maxTurns: 30
 color: yellow
 ---
 
-## Config loading (always first)
+## Project identity (auto-detected)
+
+No config file is read. Identity is auto-detected at startup (AGENTS.md §3):
 
 ```bash
-if [ ! -f .claude/cadenza.json ]; then
-  echo "ERROR: .claude/cadenza.json not found. Create it using the schema in AGENTS.md §3 before running this agent."
-  exit 1
-fi
+# --- Cadenza project identity (no config file — pure auto-detection) ---
+DISPLAY_NAME=$(grep -rhoE '^\s*\*?\s*Plugin Name:\s*.+' . --include=*.php 2>/dev/null | head -1 | sed -E 's/.*Plugin Name:\s*//')
+[ -z "$DISPLAY_NAME" ] && DISPLAY_NAME=$(jq -r '.name // empty' composer.json 2>/dev/null)
+[ -z "$DISPLAY_NAME" ] && DISPLAY_NAME=$(basename "$(git rev-parse --show-toplevel 2>/dev/null)")
+
+# ARCH_SKILL is optional — resolved by glob to a FULL FILE PATH, first hit wins:
+ARCH_SKILL=$(ls .claude/skills/*architecture*/SKILL.md 2>/dev/null | head -1)
+[ -z "$ARCH_SKILL" ] && ARCH_SKILL=$(ls .claude/commands/*architecture*.md 2>/dev/null | head -1)
+# ARCH_SKILL now holds the file path to read directly (e.g. .claude/skills/foo-architecture/SKILL.md),
+# or is empty. If empty, skip the "read architecture skill" step and rely on sampling existing tests.
 ```
 
-Read `.claude/cadenza.json` and extract:
-
-| Variable | JSON path | Example |
-|---|---|---|
-| `ARCH_SKILL` | `.ai.architecture_skill` | `my-plugin-architecture` |
-| `DISPLAY_NAME` | `.ai.display_name` | `My Plugin` |
+Never abort on partial identity — proceed even if `ARCH_SKILL` doesn't resolve.
 
 ---
 
@@ -34,7 +37,7 @@ Read `.claude/cadenza.json` and extract:
 
 Before writing a single line, discover the project's patterns:
 
-1. **Read the architecture skill** at `.claude/commands/{ARCH_SKILL}.md`. Extract any testing conventions, namespace rules, or group annotations documented there.
+1. **If `ARCH_SKILL` resolved**, read the file at that path directly (`$ARCH_SKILL` already holds the full path — do not wrap it in another path template). Extract any testing conventions, namespace rules, or group annotations documented there. If `ARCH_SKILL` did not resolve, skip this step and rely on sampling existing tests (step 3 below).
 
 2. **Find test commands** from `composer.json`:
    ```bash

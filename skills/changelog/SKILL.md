@@ -8,12 +8,10 @@ description: Generate a PO-ready grouped changelog from merged PRs since the las
 Generates a PO-ready changelog from all merged PRs since the last release, grouped by user impact.
 Includes a `changelog.txt Draft` section at the end with condensed, website-ready copy.
 
-## Config loading
+## Project identity
 
-Read `.claude/cadenza.json`:
-- `{REPO}` = `.ai.repo`
-- `{TEMP_ROOT}` = `.ai.temp_root`
-- `{DISPLAY_NAME}` = `.ai.display_name`
+Project identity is auto-detected (see AGENTS.md §3) — no config file.
+This skill uses: `{REPO}`, `{TEMP_ROOT}`, `{DISPLAY_NAME}`.
 
 ## Steps
 
