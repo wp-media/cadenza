@@ -17,7 +17,7 @@
 
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-plugin-blueviolet?style=flat-square)](https://claude.ai/code)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green?style=flat-square)](LICENSE)
-[![Version](https://img.shields.io/badge/version-0.2.1-orange?style=flat-square)](https://github.com/wp-media/cadenza/releases)
+[![Version](https://img.shields.io/badge/version-0.2.2-orange?style=flat-square)](https://github.com/wp-media/cadenza/releases)
 
 </div>
 
