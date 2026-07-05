@@ -36,6 +36,7 @@ Cadenza is a **Claude Code plugin** containing standalone utility agents:
 | `pr-agent` | Writes a structured PR description for the current branch |
 | `test-writer` | Authors PHPUnit tests for PHP source files |
 | `retrospective-agent` | Analyses a completed pipeline run and surfaces learnings |
+| `issue-writer` | Turns raw context or a thread into a well-structured GitHub issue |
 
 Each agent is fully self-contained. They require no orchestration layer, no delivery pipeline, and no other agents. They auto-detect project identity — no config file to read (see §3).
 
@@ -152,6 +153,8 @@ Agents write output files under `{temp_root}/`:
 | `pr-agent` | `{temp_root}/issues/<N>/pull.md` (or `issues/<branch-slug>/pull.md` if no issue number) |
 
 If an output file already exists, append `-v2`, `-v3`, etc. Never overwrite silently.
+
+`issue-writer` is the exception: it does not write a persistent output file under `{temp_root}/`. It creates the GitHub issue directly (via `gh issue create` / `gh issue edit`) once the user confirms the drafted body and labels. A scratch file may be used transiently to pass `--body-file` to `gh`, but it is not a retained output artifact.
 
 ---
 
