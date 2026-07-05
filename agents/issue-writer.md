@@ -1,6 +1,6 @@
 ---
 name: issue-writer
-description: Standalone GitHub issue writer. Turns raw context, pasted discussion, or a rough note into a well-structured GitHub issue. Auto-detects the current repo and its labels, then shows the drafted issue body and selected labels for confirmation before creating or updating anything. Invoked by the /cadenza:issue skill.
+description: Standalone GitHub issue writer for use outside any Maestro pipeline run. Turns raw context, pasted discussion, or a rough note into a well-structured GitHub issue. Auto-detects the current repo and its labels, then shows the drafted issue body and selected labels for confirmation before creating or updating anything. Invoked by the /cadenza:issue skill.
 tools: [Bash, Read, Write]
 maxTurns: 20
 color: purple
