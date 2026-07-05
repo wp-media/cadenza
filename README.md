@@ -53,6 +53,7 @@ Each one performs alone.
 | `pr-agent` | `/cadenza:pr` | Reads your branch commits and diffs, then writes a structured PR description — without pushing anything |
 | `test-writer` | `/cadenza:test` | Discovers your project's test conventions, then authors PHPUnit unit and integration tests for PHP source files |
 | `retrospective-agent` | `/cadenza:retrospective` | Scans completed pipeline runs, surfaces DOD pass rates and loop-back patterns, and suggests concrete `AGENTS.md` learnings |
+| `issue-writer` | `/cadenza:issue` | Turns raw context, a thread, or a rough note into a well-structured GitHub issue, then shows it for confirmation before creating |
 | *(built-in)* | `/cadenza:commit` | Analyses changed files, groups them into atomic commits with generated messages, then offers to push |
 
 ---
@@ -66,6 +67,7 @@ Each one performs alone.
 | `/cadenza:pr` | Write a PR description for the current branch |
 | `/cadenza:test [path/to/File.php]` | Author PHPUnit tests for a source file (or auto-detect from branch diff) |
 | `/cadenza:retrospective [date-from date-to]` | Analyse completed pipeline runs and surface learnings |
+| `/cadenza:issue [raw context]` | Turn raw context or a thread into a well-structured GitHub issue |
 | `/cadenza:commit [without <file>]` | Atomic commits with generated messages, then offer to push |
 
 ---
@@ -82,11 +84,13 @@ agents/                                project-a/
   pr-agent.md         ──────────────►
   test-writer.md      ──────────────►  project-b/
   retrospective-agent.md ───────────►    (auto-detected)
+  issue-writer.md     ──────────────►
 skills/
   changelog/                           project-c/
   pr/                                    (auto-detected)
   test/
   retrospective/
+  issue/
   commit/
 ```
 
@@ -122,8 +126,9 @@ cadenza/
 │
 ├── AGENTS.md                        ← Base guardrails every project extends
 │
-├── agents/                          ← 4 standalone agents
+├── agents/                          ← 5 standalone agents
 │   ├── changelog-agent.md
+│   ├── issue-writer.md
 │   ├── pr-agent.md
 │   ├── retrospective-agent.md
 │   └── test-writer.md
@@ -132,6 +137,7 @@ cadenza/
 │   ├── cadenza/
 │   ├── changelog/
 │   ├── commit/
+│   ├── issue/
 │   ├── pr/
 │   ├── retrospective/
 │   └── test/
