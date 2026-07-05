@@ -10,11 +10,10 @@ Writes PHPUnit unit and integration tests for PHP source files in this project.
 Conventions (naming, `@group` annotations, mocking libraries) are discovered from the architecture
 skill and existing test files — not assumed. Works for any WordPress plugin with Cadenza.
 
-## Config loading
+## Project identity
 
-Read `.claude/cadenza.json`:
-- `{ARCH_SKILL}` = `.ai.architecture_skill`
-- `{DISPLAY_NAME}` = `.ai.display_name`
+Project identity is auto-detected (see AGENTS.md §3) — no config file.
+This skill uses: `{ARCH_SKILL}`, `{DISPLAY_NAME}`.
 
 ## Steps
 

@@ -37,7 +37,7 @@ Cadenza is a **Claude Code plugin** containing standalone utility agents:
 | `test-writer` | Authors PHPUnit tests for PHP source files |
 | `retrospective-agent` | Analyses a completed pipeline run and surfaces learnings |
 
-Each agent is fully self-contained. They require no orchestration layer, no delivery pipeline, and no other agents. They read project identity from `.claude/cadenza.json`.
+Each agent is fully self-contained. They require no orchestration layer, no delivery pipeline, and no other agents. They auto-detect project identity — no config file to read (see §3).
 
 ---
 
@@ -48,24 +48,24 @@ Each agent is fully self-contained. They require no orchestration layer, no deli
 ```
 cadenza/
 ├── agents/       ← Sub-agent definitions (one .md per agent)
-└── commands/     ← Skill definitions (slash commands, one .md per command)
+└── skills/       ← Skill definitions (one <name>/SKILL.md per slash command)
 ```
 
 **`agents/`** contains the sub-agent markdown files. Each file defines the agent's
 instructions, tools, maxTurns, and frontmatter metadata. Agents are invoked as
 sub-agents by their corresponding command skill.
 
-**`commands/`** contains the skill (slash command) files. Each skill is a thin
-entry point: it loads project config from `.claude/cadenza.json`, resolves any
-user-supplied arguments, and then spawns the corresponding agent as a sub-agent.
+**`skills/`** contains the skill (slash command) files, one `<name>/SKILL.md` per
+command. Each skill is a thin entry point: it auto-detects project identity (see §3),
+resolves any user-supplied arguments, and then spawns the corresponding agent as a sub-agent.
 
 ## Command → agent flow
 
 ```
 User runs /cadenza:changelog
        ↓
-commands/changelog.md (skill)
-  - reads .claude/cadenza.json
+skills/changelog/SKILL.md (skill)
+  - auto-detects project identity (no config file)
   - resolves baseline argument
        ↓
 agents/changelog-agent.md (sub-agent)
@@ -76,40 +76,59 @@ agents/changelog-agent.md (sub-agent)
 Skill surfaces the result to the user
 ```
 
-## Config loading
+## Identity resolution
 
-Every agent reads `.claude/cadenza.json` at startup and extracts the variables it needs.
-Agents must never hardcode project-specific values — all identity comes from config.
+Every agent auto-detects the variables it needs at startup, per the cascade in §3.
+Agents must never hardcode project-specific values — identity is always detected fresh,
+never read from a config file, and never causes the agent to stop.
 
 ---
 
-# 3. cadenza.json Config Schema
+# 3. Project Identity (auto-detected, no config file)
 
-The canonical config file is `.claude/cadenza.json`, committed in each project repo.
+Cadenza reads **no config file**. There is no `.claude/cadenza.json` and never will be —
+every agent auto-detects its own project identity at startup, per the cascade below.
 
-```jsonc
-{
-  "ai": {
-    "repo":               "my-org/my-plugin",
-    "temp_root":          ".cadenza",
-    "display_name":       "My Plugin",
-    "architecture_skill": "my-plugin-architecture"
-  }
-}
+## Resolver block
+
+Every agent reproduces this exact block to resolve `REPO`, `TEMP_ROOT`, and `DISPLAY_NAME`:
+
+```bash
+# --- Cadenza project identity (no config file — pure auto-detection) ---
+REPO=$(gh repo view --json nameWithOwner -q .nameWithOwner 2>/dev/null)
+[ -z "$REPO" ] && REPO=$(git remote get-url origin 2>/dev/null | sed -E 's#.*[:/]([^/]+/[^/]+?)(\.git)?$#\1#')
+# REPO may be empty for local-only repos — warn, use TODO(repo), do NOT exit.
+
+TEMP_ROOT=".cadenza"
+
+DISPLAY_NAME=$(grep -rhoE '^\s*\*?\s*Plugin Name:\s*.+' . --include=*.php 2>/dev/null | head -1 | sed -E 's/.*Plugin Name:\s*//')
+[ -z "$DISPLAY_NAME" ] && DISPLAY_NAME=$(jq -r '.name // empty' composer.json 2>/dev/null)
+[ -z "$DISPLAY_NAME" ] && DISPLAY_NAME=$(basename "$(git rev-parse --show-toplevel 2>/dev/null)")
 ```
 
-| Field | Type | Required | Description |
-|---|---|---|---|
-| `ai.repo` | string | Yes | GitHub repository in `owner/repo` format. Used for PR and issue links in all generated output. |
-| `ai.temp_root` | string | Yes | Root directory where agents write output files (changelogs, test stubs, retrospective reports, etc.). Committed or gitignored — your choice. |
-| `ai.display_name` | string | Yes | Human-readable project name used in generated output headers and PR descriptions. |
-| `ai.architecture_skill` | string | No | Name of the project-specific architecture skill (matches a `.claude/commands/<name>.md` file). Loaded by `test-writer` to discover test paths, naming conventions, and `@group` annotations. |
+## ARCH_SKILL resolution (test-writer only)
 
-### Notes
+Optional, resolved by glob — first hit wins:
 
-- The filename is `.claude/cadenza.json`, not `maestro.json`. This allows both Cadenza and Maestro to be installed in the same project simultaneously without conflict.
-- All agents read the same file. There is no per-agent config — the schema is intentionally minimal.
-- If `.claude/cadenza.json` is absent, agents must stop immediately and instruct the user to create it. Never proceed with hardcoded fallbacks.
+1. `.claude/skills/*architecture*/SKILL.md`
+2. `.claude/commands/*architecture*.md`
+
+If neither matches, skip silently — `test-writer` falls back to sampling existing tests.
+
+## Non-abort rule
+
+Agents **never exit on missing identity**. If `REPO` can't be resolved, use a `TODO(repo)`
+placeholder in output plus a one-line warning — do not stop, do not ask the user to create
+a config file.
+
+## Values at a glance
+
+| Value | Detection source | Fallback |
+|---|---|---|
+| `REPO` (`owner/repo`) | `gh repo view --json nameWithOwner`, else parsed from `git remote get-url origin` | unresolved → `TODO(repo)` placeholder + one-line warning, never abort |
+| `TEMP_ROOT` | — | default `.cadenza` |
+| `DISPLAY_NAME` | `Plugin Name:` header in main plugin PHP → `composer.json .name` → repo dir name | repo dir name |
+| `ARCH_SKILL` (test-writer only) | glob `.claude/skills/*architecture*/SKILL.md` then `.claude/commands/*architecture*.md`; first hit. **Stored value is the full matched file path — read it directly, never re-template it into another path.** | skip — test-writer samples existing tests |
 
 ---
 
