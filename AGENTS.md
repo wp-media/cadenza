@@ -37,6 +37,10 @@ Cadenza is a **Claude Code plugin** containing standalone utility agents:
 | `test-writer` | Authors PHPUnit tests for PHP source files |
 | `retrospective-agent` | Analyses a completed pipeline run and surfaces learnings |
 | `issue-writer` | Turns raw context or a thread into a well-structured GitHub issue |
+| `sentry-triage` | Fetches Sentry production errors, scores them P1–P4, posts triage notes, and drafts GitHub issues for the important ones (requires the Sentry MCP) |
+| `sprint-planner` | Writes a paste-ready Slack sprint message (kick-off / mid-sprint / end-of-sprint) from a GitHub Projects sprint (Notion MCP optional, for the ping-manager line) |
+| `sentry-stats` | Produces a per-person Sentry activity dashboard (archives, resolves, notes with a heatmap) across projects for a period, published as an HTML artifact (requires the Sentry MCP) |
+| `ping-manager-rotation` | Determines and publishes the ping-manager/on-call rotation for the next two weeks on a Notion page (requires the Notion MCP) |
 
 Each agent is fully self-contained. They require no orchestration layer, no delivery pipeline, and no other agents. They auto-detect project identity — no config file to read (see §3).
 
@@ -155,6 +159,14 @@ Agents write output files under `{temp_root}/`:
 If an output file already exists, append `-v2`, `-v3`, etc. Never overwrite silently.
 
 `issue-writer` is the exception: it does not write a persistent output file under `{temp_root}/`. It creates the GitHub issue directly (via `gh issue create` / `gh issue edit`) once the user confirms the drafted body and labels. A scratch file may be used transiently to pass `--body-file` to `gh`, but it is not a retained output artifact.
+
+`sentry-triage` is also an exception: it writes its triage report and GitHub issue drafts to a local `.sentry-triage/` directory at the repo root (gitignored — the agent appends it to `.gitignore` if missing), not under `{temp_root}/`. Nothing is posted to GitHub automatically; a human reviews each draft and runs the `gh issue create` command in its header.
+
+`sentry-stats` is also an exception: it writes its HTML dashboard to the session scratchpad and publishes it as an artifact, not under `{temp_root}/`.
+
+`sprint-planner` writes the composed Slack message to `{temp_root}/sprint-planner/sprint-<number>-message.txt`.
+
+`ping-manager-rotation` is also an exception: it writes nothing to disk. It updates the target Notion page in place via the Notion MCP.
 
 ---
 

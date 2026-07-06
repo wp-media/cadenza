@@ -22,6 +22,10 @@ Print the following organised command reference to the user. Do not run anything
 | `/cadenza:pr` | Generate a PR description for the current branch |
 | `/cadenza:test [path/to/File.php]` | Write PHPUnit tests for PHP source files |
 | `/cadenza:issue [raw context]` | Turn raw context or a thread into a well-structured GitHub issue |
+| `/cadenza:sentry-triage [org] [project] [date] [min_priority]` | Triage Sentry production errors and draft GitHub issues for the important ones (needs the Sentry MCP) |
+| `/cadenza:sprint-planner [project] [org] [notion-page-id]` | Write a paste-ready Slack sprint message from a GitHub Projects sprint (Notion MCP optional, for the ping-manager line) |
+| `/cadenza:sentry-stats [period] [projects…] [--org group-one]` | Publish a per-person Sentry activity dashboard for a period (needs the Sentry MCP) |
+| `/cadenza:ping-manager-rotation [notion-page-id]` | Update the ping-manager rotation calendar on Notion (needs the Notion MCP) |
 
 ## Commit
 | Command | What it does |
