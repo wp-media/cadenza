@@ -18,7 +18,7 @@ All three args are optional and default to WP Media's values:
 
 - `project` — GitHub Projects (v2) number. Default `112`.
 - `org` — GitHub organization login. Default `wp-media`.
-- `notion-page-id` — Notion page ID for the ping-manager rotation calendar (the same page `ping-manager-rotation` uses). Default `328ed22a22f080cba113d64fc5ab79a9` (`🏓 Ping manager role`).
+- `notion-page-id` — Notion page ID for the ping-manager rotation calendar. Default `328ed22a22f080cba113d64fc5ab79a9` (`🏓 Ping manager role`).
 
 **Examples:**
 ```
@@ -207,15 +207,15 @@ The Ping Manager line always closes the message, on its own line after a blank l
 
 ### Step 6 — Fetch the Ping Manager for next Monday
 
-Every sprint message ends with a line naming the Ping Manager for the upcoming week, sourced from the same rotation calendar maintained by the `ping-manager-rotation` command.
+Every sprint message ends with a line naming the Ping Manager for the upcoming week, sourced from the team's ping-manager rotation calendar on Notion.
 
 This step needs a Notion MCP tool connected in this session (e.g. a `mcp__notion__*`-style fetch tool). Check at startup. If none is available, skip straight to the fallback in sub-step 5 below — do not stop the whole agent over this.
 
 1. Fetch the Notion page `{NOTION_PAGE_ID}` (`🏓 Ping manager role`) with the Notion MCP's fetch tool, and locate the `🗓️Calendar for team rotation` section.
-2. Compute **`target_week_1`** using the same rule as the ping-manager-rotation skill: `this_week_monday + 7 days`, where `this_week_monday` is the most recent Monday on or before `today` (system `currentDate`). This is "next Monday" relative to today — if today itself is a Monday, `target_week_1` is 7 days out, not today.
+2. Compute **`target_week_1`** as `this_week_monday + 7 days`, where `this_week_monday` is the most recent Monday on or before `today` (system `currentDate`). This is "next Monday" relative to today — if today itself is a Monday, `target_week_1` is 7 days out, not today.
 3. Find the entry in **Next weeks** whose date matches `target_week_1` (format `Month Day`, e.g. `July 6`). Its assignee is the Ping Manager for that week.
 4. Look up that assignee's first name in **Teammates in the rotation** to get their Slack nickname (already formatted as `@Full Name` in the page, e.g. `@Stephen Muyiwa Akinola`).
-5. If the Notion MCP is unavailable, the page fetch fails, or no entry exists for `target_week_1` (rotation not yet assigned that far out), do not guess an assignee — use the fallback line `🏓 Ping manager: TBD` and suggest the user run the ping-manager-rotation command first.
+5. If the Notion MCP is unavailable, the page fetch fails, or no entry exists for `target_week_1` (rotation not yet assigned that far out), do not guess an assignee — use the fallback line `🏓 Ping manager: TBD` and suggest the user fill in the rotation calendar on Notion first.
 
 ### Step 7 — Output
 
