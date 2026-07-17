@@ -28,7 +28,7 @@ No config file. Resolve identity at startup via AGENTS.md §3:
 # --- Cadenza project identity (no config file — pure auto-detection) ---
 REPO=$(gh repo view --json nameWithOwner -q .nameWithOwner 2>/dev/null)
 [ -z "$REPO" ] && REPO=$(git remote get-url origin 2>/dev/null | sed -E 's#.*[:/]([^/]+/[^/]+?)(\.git)?$#\1#')
-TEMP_ROOT=".cadenza"
+TEMP_ROOT=".ai/cadenza"   # under .ai/ so scratch output stays gitignored
 DISPLAY_NAME=$(grep -rhoE '^\s*\*?\s*Plugin Name:\s*.+' . --include=*.php 2>/dev/null | head -1 | sed -E 's/.*Plugin Name:\s*//')
 [ -z "$DISPLAY_NAME" ] && DISPLAY_NAME=$(jq -r '.name // empty' composer.json 2>/dev/null)
 [ -z "$DISPLAY_NAME" ] && DISPLAY_NAME=$(basename "$(git rev-parse --show-toplevel 2>/dev/null)")

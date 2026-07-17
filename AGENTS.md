@@ -109,7 +109,7 @@ REPO=$(gh repo view --json nameWithOwner -q .nameWithOwner 2>/dev/null)
 [ -z "$REPO" ] && REPO=$(git remote get-url origin 2>/dev/null | sed -E 's#.*[:/]([^/]+/[^/]+?)(\.git)?$#\1#')
 # REPO may be empty for local-only repos — warn, use TODO(repo), do NOT exit.
 
-TEMP_ROOT=".cadenza"
+TEMP_ROOT=".ai/cadenza"   # nested under .ai/ so scratch output stays gitignored
 
 DISPLAY_NAME=$(grep -rhoE '^\s*\*?\s*Plugin Name:\s*.+' . --include=*.php 2>/dev/null | head -1 | sed -E 's/.*Plugin Name:\s*//')
 [ -z "$DISPLAY_NAME" ] && DISPLAY_NAME=$(jq -r '.name // empty' composer.json 2>/dev/null)
@@ -136,7 +136,7 @@ a config file.
 | Value | Detection source | Fallback |
 |---|---|---|
 | `REPO` (`owner/repo`) | `gh repo view --json nameWithOwner`, else parsed from `git remote get-url origin` | unresolved → `TODO(repo)` placeholder + one-line warning, never abort |
-| `TEMP_ROOT` | — | default `.cadenza` |
+| `TEMP_ROOT` | — | default `.ai/cadenza` (under `.ai/`, which projects gitignore) |
 | `DISPLAY_NAME` | `Plugin Name:` header in main plugin PHP → `composer.json .name` → repo dir name | repo dir name |
 | `ARCH_SKILL` (test-writer only) | glob `.claude/skills/*architecture*/SKILL.md` then `.claude/commands/*architecture*.md`; first hit. **Stored value is the full matched file path — read it directly, never re-template it into another path.** | skip — test-writer samples existing tests |
 

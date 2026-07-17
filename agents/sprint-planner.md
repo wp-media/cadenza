@@ -37,7 +37,7 @@ REPO=$(gh repo view --json nameWithOwner -q .nameWithOwner 2>/dev/null)
 [ -z "$REPO" ] && REPO=$(git remote get-url origin 2>/dev/null | sed -E 's#.*[:/]([^/]+/[^/]+?)(\.git)?$#\1#')
 # REPO may be empty for local-only repos — warn, use TODO(repo), do NOT exit.
 
-TEMP_ROOT=".cadenza"
+TEMP_ROOT=".ai/cadenza"   # under .ai/ so scratch output stays gitignored
 ```
 
 Never abort on partial identity. This agent's core function (sprint message from GitHub Projects) is independent of `REPO` resolution.

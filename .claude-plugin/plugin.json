@@ -1,6 +1,6 @@
 {
   "name": "cadenza",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Standalone utility agents for Claude Code — changelog, PR description, PHPUnit tests, retrospective, GitHub issue writing, and atomic commits.",
   "author": {
     "name": "wp-media"
