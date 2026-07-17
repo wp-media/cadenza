@@ -54,6 +54,10 @@ Each one performs alone.
 | `test-writer` | `/cadenza:test` | Discovers your project's test conventions, then authors PHPUnit unit and integration tests for PHP source files |
 | `retrospective-agent` | `/cadenza:retrospective` | Scans completed pipeline runs, surfaces DOD pass rates and loop-back patterns, and suggests concrete `AGENTS.md` learnings |
 | `issue-writer` | `/cadenza:issue` | Turns raw context, a thread, or a rough note into a well-structured GitHub issue, then shows it for confirmation before creating |
+| `sentry-triage` | `/cadenza:sentry-triage` | Fetches new/regressed/escalating Sentry production errors, scores them P1–P4, posts triage notes, and drafts GitHub issues for the important ones (needs the Sentry MCP) |
+| `sprint-planner` | `/cadenza:sprint-planner` | Writes a paste-ready Slack sprint message (kick-off / mid-sprint / end-of-sprint) from a GitHub Projects sprint (Notion MCP optional) |
+| `sentry-stats` | `/cadenza:sentry-stats` | Publishes a per-person Sentry activity dashboard — archives, resolves, notes — across projects for a period, with a contributors table and archive heatmap (needs the Sentry MCP) |
+| *(orchestrator skill)* | `/cadenza:backlog-triage` | Audits the open-issue backlog via a fan-out (feature-map review + per-issue categorizers + already-fixed check) → ranked shortlist of AI-autonomous quality wins + full triage, as an HTML artifact (read-only; never closes issues) |
 | *(built-in)* | `/cadenza:commit` | Analyses changed files, groups them into atomic commits with generated messages, then offers to push |
 
 ---
@@ -68,6 +72,10 @@ Each one performs alone.
 | `/cadenza:test [path/to/File.php]` | Author PHPUnit tests for a source file (or auto-detect from branch diff) |
 | `/cadenza:retrospective [date-from date-to]` | Analyse completed pipeline runs and surface learnings |
 | `/cadenza:issue [raw context]` | Turn raw context or a thread into a well-structured GitHub issue |
+| `/cadenza:sentry-triage [org] [project] [date] [min_priority]` | Triage Sentry production errors and draft GitHub issues (needs the Sentry MCP) |
+| `/cadenza:sprint-planner [project] [org] [notion-page-id]` | Write a paste-ready Slack sprint message from a GitHub Projects sprint |
+| `/cadenza:sentry-stats [period] [projects…] [--org group-one]` | Publish a per-person Sentry activity dashboard for a period (needs the Sentry MCP) |
+| `/cadenza:backlog-triage [issue-numbers…] [--branch ref]` | Audit the open-issue backlog → ranked AI-autonomous quality wins + full triage artifact (read-only) |
 | `/cadenza:commit [without <file>]` | Atomic commits with generated messages, then offer to push |
 
 ---
@@ -85,6 +93,7 @@ agents/                                project-a/
   test-writer.md      ──────────────►  project-b/
   retrospective-agent.md ───────────►    (auto-detected)
   issue-writer.md     ──────────────►
+  sentry-triage.md    ──────────────►
 skills/
   changelog/                           project-c/
   pr/                                    (auto-detected)
@@ -126,20 +135,27 @@ cadenza/
 │
 ├── AGENTS.md                        ← Base guardrails every project extends
 │
-├── agents/                          ← 5 standalone agents
+├── agents/                          ← 8 standalone agents
 │   ├── changelog-agent.md
 │   ├── issue-writer.md
 │   ├── pr-agent.md
 │   ├── retrospective-agent.md
+│   ├── sentry-stats.md
+│   ├── sentry-triage.md
+│   ├── sprint-planner.md
 │   └── test-writer.md
 │
 ├── skills/                          ← Skills (slash commands)
+│   ├── backlog-triage/
 │   ├── cadenza/
 │   ├── changelog/
 │   ├── commit/
 │   ├── issue/
 │   ├── pr/
 │   ├── retrospective/
+│   ├── sentry-stats/
+│   ├── sentry-triage/
+│   ├── sprint-planner/
 │   └── test/
 │
 └── refs/                            ← Bundled reference files

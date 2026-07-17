@@ -37,8 +37,17 @@ Cadenza is a **Claude Code plugin** containing standalone utility agents:
 | `test-writer` | Authors PHPUnit tests for PHP source files |
 | `retrospective-agent` | Analyses a completed pipeline run and surfaces learnings |
 | `issue-writer` | Turns raw context or a thread into a well-structured GitHub issue |
+| `sentry-triage` | Fetches Sentry production errors, scores them P1–P4, posts triage notes, and drafts GitHub issues for the important ones (requires the Sentry MCP) |
+| `sprint-planner` | Writes a paste-ready Slack sprint message (kick-off / mid-sprint / end-of-sprint) from a GitHub Projects sprint (Notion MCP optional) |
+| `sentry-stats` | Produces a per-person Sentry activity dashboard (archives, resolves, notes with a heatmap) across projects for a period, published as an HTML artifact (requires the Sentry MCP) |
 
 Each agent is fully self-contained. They require no orchestration layer, no delivery pipeline, and no other agents. They auto-detect project identity — no config file to read (see §3).
+
+**Orchestrator skills.** A few skills coordinate a small fan-out of sub-agents from the main session rather than spawning a single worker. These have no dedicated `agents/*.md` file — the flow lives entirely in the skill:
+
+| Orchestrator skill | Purpose |
+|---|---|
+| `backlog-triage` | Audits the current repo's open GitHub-issue backlog: an interactive scope gate, then a fan-out (feature-map code review + per-issue categorizers + already-fixed verification), producing a ranked shortlist of AI-autonomous quality wins plus a full Should Keep / Already Fixed / Unsure / Close Candidate triage as an HTML artifact. Read-only against GitHub — never closes, comments on, or edits issues. |
 
 ---
 
@@ -155,6 +164,14 @@ Agents write output files under `{temp_root}/`:
 If an output file already exists, append `-v2`, `-v3`, etc. Never overwrite silently.
 
 `issue-writer` is the exception: it does not write a persistent output file under `{temp_root}/`. It creates the GitHub issue directly (via `gh issue create` / `gh issue edit`) once the user confirms the drafted body and labels. A scratch file may be used transiently to pass `--body-file` to `gh`, but it is not a retained output artifact.
+
+`sentry-triage` is also an exception: it writes its triage report and GitHub issue drafts to a local `.sentry-triage/` directory at the repo root (gitignored — the agent appends it to `.gitignore` if missing), not under `{temp_root}/`. Nothing is posted to GitHub automatically; a human reviews each draft and runs the `gh issue create` command in its header.
+
+`sentry-stats` is also an exception: it writes its HTML dashboard to the session scratchpad and publishes it as an artifact, not under `{temp_root}/`.
+
+`sprint-planner` writes the composed Slack message to `{temp_root}/sprint-planner/sprint-<number>-message.txt`.
+
+`backlog-triage` is an orchestrator skill (no agent file): it writes its HTML audit to the session scratchpad and publishes it as an artifact, not under `{temp_root}/`.
 
 ---
 
